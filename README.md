@@ -1,15 +1,15 @@
-# prodpulse-sdk
+# prodpulse-node-sdk
 
-Official Node.js SDK for [ProdPulse.AI](https://prodpulse.ai) — AI-powered production error log analyzer.
+Official Node.js SDK for [ProdPulse.AI](https://prodpulse.ai) — AI-powered production infrastructure & error monitoring.
 
 ## Installation
 ```bash
-npm install prodpulse-sdk
+npm install prodpulse-node-sdk
 ```
 
 ## Quick Start
 ```javascript
-const prodpulse = require('prodpulse-sdk');
+const prodpulse = require('prodpulse-node-sdk');
 
 // Initialize with your API key
 prodpulse.init('pp_live_your_api_key_here');
@@ -46,12 +46,13 @@ prodpulse.init('pp_live_your_api_key_here');
 - ✅ Zero access to your codebase
 - ✅ You control what gets sent
 - ✅ Open source — verify yourself
+
 ## Database Monitoring
 
 ### MySQL
 ```javascript
 const mysql = require('mysql2');
-const prodpulse = require('prodpulse-sdk');
+const prodpulse = require('prodpulse-node-sdk');
 
 prodpulse.init('pp_live_xxx');
 
@@ -62,7 +63,7 @@ prodpulse.monitorDatabase(connection, 'mysql');
 ### PostgreSQL
 ```javascript
 const { Pool } = require('pg');
-const prodpulse = require('prodpulse-sdk');
+const prodpulse = require('prodpulse-node-sdk');
 
 prodpulse.init('pp_live_xxx');
 
@@ -73,7 +74,7 @@ prodpulse.monitorDatabase(pool, 'postgresql');
 ### MongoDB
 ```javascript
 const mongoose = require('mongoose');
-const prodpulse = require('prodpulse-sdk');
+const prodpulse = require('prodpulse-node-sdk');
 
 prodpulse.init('pp_live_xxx');
 
@@ -83,7 +84,6 @@ prodpulse.monitorDatabase(mongoose, 'mongodb');
 
 ## Manual Capture
 ```javascript
-// Capture any error manually
 try {
   // your code
 } catch (err) {
