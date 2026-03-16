@@ -19,15 +19,33 @@ prodpulse.init('pp_live_your_api_key_here');
 
 ## Features
 
+### 🔴 Auto Error Detection
 - ✅ Auto-captures uncaught exceptions
 - ✅ Auto-captures unhandled promise rejections
 - ✅ Monitors console.error calls
-- ✅ MySQL query monitoring + slow query detection
-- ✅ PostgreSQL query monitoring + slow query detection
-- ✅ MongoDB connection monitoring
-- ✅ HTTP request error monitoring
 - ✅ Manual error capture
 
+### 🗄️ Database Monitoring
+- ✅ MySQL query monitoring + slow query detection
+- ✅ PostgreSQL query monitoring + slow query detection
+- ✅ MongoDB connection monitoring + disconnect alerts
+- ✅ Slow query detection (>3 seconds)
+
+### 🌐 HTTP Monitoring
+- ✅ HTTP/HTTPS request error detection
+- ✅ Slow HTTP request detection (>5 seconds)
+- ✅ 5xx error detection
+
+### 🤖 AI Powered
+- ✅ Every error instantly analyzed by AI
+- ✅ Plain English explanation of root cause
+- ✅ Step by step fix instructions
+- ✅ Estimated fix time
+
+### 🔒 Privacy First
+- ✅ Zero access to your codebase
+- ✅ You control what gets sent
+- ✅ Open source — verify yourself
 ## Database Monitoring
 
 ### MySQL
