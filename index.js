@@ -1,16 +1,22 @@
 'use strict';
 
 const { sendLog } = require('./lib/sender');
-const { initErrorHandler } = require('./lib/errorHandler');
+const { initErrorHandler, captureError } = require('./lib/errorHandler');
 const { monitorMySQL, monitorPostgres, monitorMongoDB } = require('./lib/dbMonitor');
 const { initHttpMonitor } = require('./lib/httpMonitor');
+const { createRequestMiddleware } = require('./lib/context/requestContext');
+const { sanitizeString, sanitizeObject } = require('./lib/utils/sanitizer');
+const { getGitContext } = require('./lib/context/gitContext');
+const { getSystemContext } = require('./lib/context/systemContext');
+const { getAppContext } = require('./lib/context/appContext');
 
 let apiKey = null;
 let initialized = false;
+let config = {};
 
 /**
  * Initialize ProdPulse SDK
- * @param {string} key - Your ProdPulse API key (pp_live_xxx or pp_test_xxx)
+ * @param {string} key - Your ProdPulse API key
  * @param {object} options - Optional configuration
  */
 function init(key, options = {}) {
@@ -19,7 +25,7 @@ function init(key, options = {}) {
   }
 
   if (!key.startsWith('pp_live_') && !key.startsWith('pp_test_')) {
-    throw new Error('[ProdPulse] Invalid API key format. Key must start with pp_live_ or pp_test_');
+    throw new Error('[ProdPulse] Invalid API key format. Must start with pp_live_ or pp_test_');
   }
 
   if (initialized) {
@@ -29,24 +35,39 @@ function init(key, options = {}) {
 
   apiKey = key;
   initialized = true;
+  config = options;
 
-  // Initialize error handler by default
-  initErrorHandler(apiKey);
+  // Initialize error handler
+  initErrorHandler(apiKey, {
+    appName: options.appName,
+    appVersion: options.appVersion,
+    environment: options.environment,
+    serviceName: options.serviceName,
+  });
 
-  // Initialize HTTP monitor by default
+  // Initialize HTTP monitor
   if (options.monitorHttp !== false) {
     initHttpMonitor(apiKey);
   }
 
   if (process.env.PRODPULSE_DEBUG === 'true') {
-    console.log('[ProdPulse] SDK initialized successfully ✓');
-    console.log('[ProdPulse] Environment:', key.startsWith('pp_live_') ? 'PRODUCTION' : 'DEVELOPMENT');
+    console.log('');
+    console.log('╔══════════════════════════════════════╗');
+    console.log('║     ProdPulse.AI SDK Initialized     ║');
+    console.log('╚══════════════════════════════════════╝');
+    console.log(`Environment  : ${key.startsWith('pp_live_') ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`App Name     : ${options.appName || 'unknown'}`);
+    console.log(`App Version  : ${options.appVersion || 'unknown'}`);
+    console.log(`HTTP Monitor : ${options.monitorHttp !== false ? '✓' : '✗'}`);
+    console.log(`Git Context  : ${getGitContext() ? '✓' : '✗'}`);
+    console.log('');
   }
 }
 
 /**
- * Monitor MySQL connection
- * @param {object} connection - MySQL connection or pool
+ * Monitor database connections
+ * @param {object} connection - DB connection or pool
+ * @param {string} type - mysql | postgresql | mongodb | redis
  */
 function monitorDatabase(connection, type = 'mysql') {
   if (!initialized) {
@@ -67,40 +88,75 @@ function monitorDatabase(connection, type = 'mysql') {
       monitorMongoDB(apiKey, connection);
       break;
     default:
-      console.warn(`[ProdPulse] Unsupported database type: ${type}. Supported: mysql, postgresql, mongodb`);
+      console.warn(`[ProdPulse] Unsupported DB type: ${type}. Supported: mysql, postgresql, mongodb`);
   }
 }
 
 /**
- * Manually capture an error or log
- * @param {Error|string} error - Error object or string message
- * @param {object} extra - Extra context to include
+ * Manually capture an error with full context
+ * @param {Error|string} error - Error object or string
+ * @param {object} extra - Extra context
  */
 function capture(error, extra = {}) {
   if (!initialized) {
     throw new Error('[ProdPulse] SDK not initialized. Call prodpulse.init() first.');
   }
 
-  let log;
   if (error instanceof Error) {
-    log = `
-MANUAL CAPTURE
-Type: ${error.name}
-Message: ${error.message}
-Stack: ${error.stack}
-Extra: ${JSON.stringify(extra)}
-Timestamp: ${new Date().toISOString()}
-    `.trim();
+    captureError(apiKey, error, { extra: sanitizeObject(extra) });
   } else {
-    log = `
+    const log = `
 MANUAL CAPTURE
-Message: ${String(error)}
-Extra: ${JSON.stringify(extra)}
+Message: ${sanitizeString(String(error))}
+Extra: ${sanitizeString(JSON.stringify(extra))}
 Timestamp: ${new Date().toISOString()}
     `.trim();
+    sendLog(apiKey, log);
+  }
+}
+
+/**
+ * Express/Fastify request middleware
+ * Attaches request context to errors automatically
+ * Usage: app.use(prodpulse.requestMiddleware())
+ */
+function requestMiddleware() {
+  if (!initialized) {
+    throw new Error('[ProdPulse] SDK not initialized. Call prodpulse.init() first.');
+  }
+  return createRequestMiddleware();
+}
+
+/**
+ * Express error handler middleware
+ * Captures Express errors with full context
+ * Usage: app.use(prodpulse.errorMiddleware())
+ */
+function errorMiddleware() {
+  if (!initialized) {
+    throw new Error('[ProdPulse] SDK not initialized. Call prodpulse.init() first.');
   }
 
-  sendLog(apiKey, log);
+  return (err, req, res, next) => {
+    captureError(apiKey, err, {
+      request: req._prodpulseContext || null,
+      extra: { type: 'express_error_middleware' }
+    });
+    next(err);
+  };
+}
+
+/**
+ * Get current SDK context (for debugging)
+ */
+function getContext() {
+  return {
+    initialized,
+    environment: apiKey?.startsWith('pp_live_') ? 'production' : 'development',
+    git: getGitContext(),
+    system: getSystemContext(),
+    app: getAppContext(config),
+  };
 }
 
 /**
@@ -114,5 +170,8 @@ module.exports = {
   init,
   monitorDatabase,
   capture,
-  isInitialized
+  requestMiddleware,
+  errorMiddleware,
+  getContext,
+  isInitialized,
 };
