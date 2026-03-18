@@ -601,6 +601,6 @@ Returns a plain object snapshot of the current SDK context — app, git, system,
 
 <br />
 
-MIT License &nbsp;©&nbsp; 2024 ProdPulse Technologies
+MIT License &nbsp;©&nbsp; 2026 ProdPulse Technologies
 
 </div>
