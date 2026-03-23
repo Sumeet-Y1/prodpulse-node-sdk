@@ -20,7 +20,7 @@
 
 ## `prodpulse-node-sdk`
 
-**The official Node.js SDK for [ProdPulse.AI](https://prodpulse.ai)**
+**The official Node.js SDK for [ProdPulse.AI](https://prodpulse-frontend.pages.dev)**
 
 AI-powered production monitoring. Understand and fix errors instantly — with full context, zero guesswork.
 
@@ -127,7 +127,7 @@ const prodpulse = require('prodpulse-node-sdk');
 
 prodpulse.init('pp_live_xxx', {
   appName:     'My API',
-  appVersion:  '1.0.0',
+  appVersion:  '2.0.2,
   environment: 'production',
 });
 
@@ -143,7 +143,7 @@ That's it. `uncaughtException` and `unhandledRejection` are both captured by def
 
 ## 🔑 Get Your API Key
 
-1. Sign up or log in at **[app.prodpulse.ai](https://app.prodpulse.ai)**
+1. Sign up or log in at **[app.prodpulse.ai](https://prodpulse-frontend.pages.dev)**
 2. Navigate to **Settings → API Keys**
 3. Create a new key — choose `pp_live_` for production or `pp_test_` for development
 4. Copy the key and pass it to `prodpulse.init()`
@@ -580,12 +580,12 @@ Returns a plain object snapshot of the current SDK context — app, git, system,
 
 | Channel | Where to go |
 |---|---|
-| 📖 **Documentation** | [docs.prodpulse.ai](https://docs.prodpulse.ai) |
-| 💬 **Community Discord** | [discord.gg/prodpulse](https://discord.gg/prodpulse) |
-| 🐛 **Bug Reports** | [GitHub Issues](https://github.com/prodpulse-ai/prodpulse-node-sdk/issues) |
-| 🚀 **Feature Requests** | [GitHub Discussions](https://github.com/prodpulse-ai/prodpulse-node-sdk/discussions) |
-| 📧 **Enterprise & Priority Support** | [enterprise@prodpulse.ai](mailto:enterprise@prodpulse.ai) |
-| 🐦 **Updates** | [@prodpulseai](https://twitter.com/prodpulseai) |
+| 📖 **Documentation** | [coming soon]() |
+| 💬 **Community Discord** | [coming soon]() |
+| 🐛 **Bug Reports** | [coming soon]() |
+| 🚀 **Feature Requests** | [coming soon]() |
+| 📧 **Enterprise & Priority Support** | [coming soon]() |
+| 🐦 **Updates** | [coming soon]() |
 
 ---
 
@@ -597,7 +597,7 @@ Returns a plain object snapshot of the current SDK context — app, git, system,
 
 <br />
 
-[prodpulse.ai](https://prodpulse.ai) &nbsp;·&nbsp; [Dashboard](https://app.prodpulse.ai) &nbsp;·&nbsp; [Docs](https://docs.prodpulse.ai) &nbsp;·&nbsp; [Changelog](https://docs.prodpulse.ai/changelog) &nbsp;·&nbsp; [Status](https://status.prodpulse.ai)
+[prodpulse.ai](https://d224b3db.prodpulse-landing.pages.dev) &nbsp;·&nbsp; [Dashboard](https://app.prodpulse.ai) &nbsp;·&nbsp; [Docs](https://docs.prodpulse.ai) &nbsp;·&nbsp; [Changelog](https://docs.prodpulse.ai/changelog) &nbsp;·&nbsp; [Status](https://status.prodpulse.ai)
 
 <br />
 
