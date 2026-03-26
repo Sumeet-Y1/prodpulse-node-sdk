@@ -16,15 +16,20 @@ let config = {};
 
 /**
  * Initialize ProdPulse SDK
- * @param {string} key - Your ProdPulse API key
+ * @param {string} [key] - Your ProdPulse API key (optional if PRODPULSE_API_KEY env var is set)
  * @param {object} options - Optional configuration
  */
 function init(key, options = {}) {
-  if (!key) {
-    throw new Error('[ProdPulse] API key is required. Get yours at prodpulse.ai');
+  // Support env variable if no key passed
+  const resolvedKey = key || process.env.PRODPULSE_API_KEY;
+
+  if (!resolvedKey) {
+    throw new Error(
+      '[ProdPulse] API key is required. Pass it to init() or set the PRODPULSE_API_KEY environment variable. Get yours at prodpulse.ai'
+    );
   }
 
-  if (!key.startsWith('pp_live_') && !key.startsWith('pp_test_')) {
+  if (!resolvedKey.startsWith('pp_live_') && !resolvedKey.startsWith('pp_test_')) {
     throw new Error('[ProdPulse] Invalid API key format. Must start with pp_live_ or pp_test_');
   }
 
@@ -33,7 +38,7 @@ function init(key, options = {}) {
     return;
   }
 
-  apiKey = key;
+  apiKey = resolvedKey;
   initialized = true;
   config = options;
 
@@ -55,7 +60,8 @@ function init(key, options = {}) {
     console.log('╔══════════════════════════════════════╗');
     console.log('║     ProdPulse.AI SDK Initialized     ║');
     console.log('╚══════════════════════════════════════╝');
-    console.log(`Environment  : ${key.startsWith('pp_live_') ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`Environment  : ${resolvedKey.startsWith('pp_live_') ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`API Key Source: ${key ? 'init() argument' : 'PRODPULSE_API_KEY env var'}`);
     console.log(`App Name     : ${options.appName || 'unknown'}`);
     console.log(`App Version  : ${options.appVersion || 'unknown'}`);
     console.log(`HTTP Monitor : ${options.monitorHttp !== false ? '✓' : '✗'}`);
