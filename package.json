@@ -1,6 +1,6 @@
 {
   "name": "prodpulse-node-sdk",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Official Node.js SDK for ProdPulse.AI — AI-powered production monitoring with rich context, git tracking and security sanitization",
   "main": "index.js",
   "scripts": {
